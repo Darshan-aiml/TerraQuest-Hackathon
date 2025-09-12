@@ -1,0 +1,480 @@
+<!DOCTYPE a html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraQuest Clone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #1d1d1f;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .bg-white-translucent {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+        .section-heading {
+            font-weight: 700;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            color: #1d1d1f;
+        }
+        .section-heading.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .timeline-item {
+            position: relative;
+            padding: 2rem 0 2rem 3rem;
+            border-left: 1px solid #c8b8e0;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background-color: #9f86c0;
+            border-radius: 50%;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(29, 29, 31, 0.2);
+            border-radius: 50%;
+            border-top: 4px solid #1d1d1f;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Styles for macOS-like navbar animation */
+        .navbar-scrolled {
+            width: 90%;
+            max-width: 700px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(1rem) scale(0.95);
+        }
+        .navbar-full {
+            width: 100%;
+            border-radius: 0;
+            transform: translateY(0) scale(1);
+        }
+        .content-box {
+            border: 4px solid #1d1d1f;
+            box-shadow: 10px 10px 0 0 #9f86c0;
+        }
+        .mobile-menu-open {
+            height: auto;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            opacity: 1;
+            transition: all 0.3s ease-in-out;
+            backdrop-filter: blur(15px);
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        .mobile-menu-closed {
+            height: 0;
+            padding: 0;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed z-50 transition-all duration-500 ease-in-out py-4 bg-white-translucent flex justify-center w-full top-0 left-1/2 -translate-x-1/2 navbar-full">
+        <div class="container mx-auto px-4 flex justify-between items-center w-full lg:max-w-[700px] transition-all duration-300">
+            <a href="#" class="flex items-center space-x-2">
+                <img src="Green Modern Badge Gardening Logo Design Background Removed.png" alt="TerraQuest Logo" class="h-8 w-8 rounded-full">
+                <span class="text-xl font-extrabold tracking-wide text-black">TERRAQUEST</span>
+            </a>
+            <div class="hidden lg:flex items-center space-x-8 text-sm font-semibold">
+                <a href="#home" class="hover:text-black transition-colors duration-300 text-black">Home</a>
+                <a href="#about" class="hover:text-black transition-colors duration-300 text-black">About Us</a>
+                <a href="#faqs" class="hover:text-black transition-colors duration-300 text-black">FAQs</a>
+                <a href="#timeline" class="hover:text-black transition-colors duration-300 text-black">Timeline</a>
+            </div>
+            <button id="mobile-menu-btn" class="lg:hidden text-black focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="lg:hidden absolute top-full left-0 w-full mobile-menu-closed bg-white-translucent">
+            <div class="px-4 py-4 space-y-4 text-center">
+                <a href="#home" class="block py-2 hover:text-black transition-colors duration-300 text-black">Home</a>
+                <a href="#about" class="block py-2 hover:text-black transition-colors duration-300 text-black">About Us</a>
+                <a href="#faqs" class="block py-2 hover:text-black transition-colors duration-300 text-black">FAQs</a>
+                <a href="#timeline" class="block py-2 hover:text-black transition-colors duration-300 text-black">Timeline</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="min-h-screen">
+        <!-- Home Section -->
+        <section id="home" class="relative overflow-hidden text-center min-h-screen flex items-center justify-center">
+            <video id="bg-video" autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0">
+                <source src="video_2025-09-12_00-19-41.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="absolute inset-0 bg-black opacity-30 z-0"></div>
+            <div class="container relative z-10">
+                <h1 class="text-4xl md:text-6xl lg:text-8xl font-bold mb-2 tracking-tighter text-white">
+                    TERRAQUEST
+                </h1>
+                <p class="text-md md:text-lg text-gray-200 mb-8 italic">
+                    "Your Quest for Smarter Solutions Begins Here."
+                </p>
+                <p class="text-lg md:text-2xl text-white mb-8">
+                    10-11th, October 2025
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdtlluWzCxjdZ5TC2aCWuXD7-Zov-IxaRcLS-0QtpXefQbAHg/viewform?usp=dialog" class="bg-gray-800 text-white font-semibold py-3 px-8 rounded-full hover:bg-black transition-colors duration-300">Register Now</a>
+                    <a href="Purple Gradient Illustrative Business in Artificial Intelligence Poster.pdf" class="bg-blue-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-blue-700 transition-colors duration-300">Learn More</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about" class="py-20 bg-[#f0ebf8]">
+            <div class="container fade-in flex flex-col items-center">
+                <div class="w-full max-w-4xl p-8 bg-white rounded-[2rem] text-center content-box">
+                    <div class="p-8 space-y-6">
+                        <div class="flex items-center justify-center space-x-4">
+                            <h2 class="section-heading text-black !mb-0 !text-3xl font-extrabold tracking-wide">
+                                <span>What is</span>
+                                <span class="text-[#6a498b]">TerraQuest?</span>
+                            </h2>
+                            
+                        </div>
+                        <p id="about-text" class="text-lg leading-relaxed text-[#1d1d1f] mb-4">
+                            TerraQuest is a thrilling 24-hour online hackathon organized by the Department of AI/ML, Sri Sairam College of Engineering, dedicated to building impactful solutions for a better future.
+                        </p>
+                        <p class="text-lg leading-relaxed text-[#1d1d1f]">
+                            This year, TerraQuest takes innovation to the next level by aligning with the United Nations Sustainable Development Goals (SDGs) as our central theme. We invite developers, designers, and problem-solvers from diverse backgrounds to create projects that address real-world challenges — from climate action and clean energy to quality education and sustainable cities. Our mission is to foster a culture of purpose-driven innovation and collaboration, empowering students to transform bold ideas into actionable solutions that contribute to global well-being.
+                        </p>
+                        <p class="text-lg leading-relaxed text-[#1d1d1f]">
+                            Join us for 24 hours of coding, learning, and collaboration, where your ideas can make a difference and help shape a more sustainable world.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline Section -->
+        <section id="timeline" class="py-20 bg-[#e0d6f2]">
+            <div class="container text-center">
+                <h2 class="section-heading text-[#6a498b]">Timeline</h2>
+                <div class="w-full max-w-4xl p-8 bg-white rounded-[2rem] text-center mx-auto content-box">
+                    <div class="flex justify-center mb-8 space-x-4">
+                        <button id="day1-btn" class="px-6 py-2 rounded-full font-bold bg-blue-600 text-white transition-colors duration-300 hover:bg-blue-700">Day 1</button>
+                        <button id="day2-btn" class="px-6 py-2 rounded-full font-bold bg-[#f0f0f0] text-gray-700 transition-colors duration-300 hover:bg-gray-200">Day 2</button>
+                    </div>
+                    
+                    <h3 id="timeline-date" class="text-xl font-bold text-gray-800 mb-2">OCTOBER 10, 2025</h3>
+                    <p id="timeline-subtitle" class="text-lg text-black font-semibold mb-6">Kickoff & Ideation</p>
+
+                    <div id="timeline-events" class="max-w-xl mx-auto space-y-4">
+                        <!-- Day 1 Events -->
+                        <div class="day1-event bg-white p-4 rounded-full flex items-center justify-between shadow-sm border-4 border-black">
+                            <span class="bg-blue-600 text-sm font-bold px-4 py-2 rounded-full text-white">9:00 AM</span>
+                            <p class="ml-4 flex-1 text-left text-gray-800">Check-in starts</p>
+                        </div>
+                        <div class="day1-event bg-white p-4 rounded-full flex items-center justify-between shadow-sm border-4 border-black">
+                            <span class="bg-blue-600 text-sm font-bold px-4 py-2 rounded-full text-white">9:30 AM</span>
+                            <p class="ml-4 flex-1 text-left text-gray-800">Inauguration</p>
+                        </div>
+                        <div class="day1-event bg-white p-4 rounded-full flex items-center justify-between shadow-sm border-4 border-black">
+                            <span class="bg-blue-600 text-sm font-bold px-4 py-2 rounded-full text-white">12:00 PM</span>
+                            <p class="ml-4 flex-1 text-left text-gray-800">Hacking starts</p>
+                        </div>
+                        <div class="day1-event bg-white p-4 rounded-full flex items-center justify-between shadow-sm border-4 border-black">
+                            <span class="bg-blue-600 text-sm font-bold px-4 py-2 rounded-full text-white">1:00 PM</span>
+                            <p class="ml-4 flex-1 text-left text-gray-800">Lunch break</p>
+                        </div>
+                        <div class="day1-event bg-white p-4 rounded-full flex items-center justify-between shadow-sm border-4 border-black">
+                            <span class="bg-blue-600 text-sm font-bold px-4 py-2 rounded-full text-white">4:00 PM</span>
+                            <p class="ml-4 flex-1 text-left text-gray-800">1st Judgement</p>
+                        </div>
+                        <div class="day1-event bg-white p-4 rounded-full flex items-center justify-between shadow-sm border-4 border-black">
+                            <span class="bg-blue-600 text-sm font-bold px-4 py-2 rounded-full text-white">7:30 PM</span>
+                            <p class="ml-4 flex-1 text-left text-gray-800">Dinner</p>
+                        </div>
+                        <div class="day1-event bg-white p-4 rounded-full flex items-center justify-between shadow-sm border-4 border-black">
+                            <span class="bg-blue-600 text-sm font-bold px-4 py-2 rounded-full text-white">9:00 PM</span>
+                            <p class="ml-4 flex-1 text-left text-gray-800">2nd Judgement</p>
+                        </div>
+
+                        <!-- Day 2 Events (Hidden by default) -->
+                        <div class="day2-event hidden bg-white p-4 rounded-full flex items-center justify-between shadow-sm border-4 border-black">
+                            <span class="bg-blue-600 text-sm font-bold px-4 py-2 rounded-full text-white">8:00 AM</span>
+                            <p class="ml-4 flex-1 text-left text-gray-800">Breakfast</p>
+                        </div>
+                        <div class="day2-event hidden bg-white p-4 rounded-full flex items-center justify-between shadow-sm border-4 border-black">
+                            <span class="bg-blue-600 text-sm font-bold px-4 py-2 rounded-full text-white">10:00 AM</span>
+                            <p class="ml-4 flex-1 text-left text-gray-800">Final Judgement</p>
+                        </div>
+                        <div class="day2-event hidden bg-white p-4 rounded-full flex items-center justify-between shadow-sm border-4 border-black">
+                            <span class="bg-blue-600 text-sm font-bold px-4 py-2 rounded-full text-white">12:00 PM</span>
+                            <p class="ml-4 flex-1 text-left text-gray-800">Hackathon ends, Lunch</p>
+                        </div>
+                        <div class="day2-event hidden bg-white p-4 rounded-full flex items-center justify-between shadow-sm border-4 border-black">
+                            <span class="bg-blue-600 text-sm font-bold px-4 py-2 rounded-full text-white">2:00 PM</span>
+                            <p class="ml-4 flex-1 text-left text-gray-800">Award ceremony</p>
+                        </div>
+                        <div class="day2-event hidden bg-white p-4 rounded-full flex items-center justify-between shadow-sm border-4 border-black">
+                            <span class="bg-blue-600 text-sm font-bold px-4 py-2 rounded-full text-white">4:00 PM</span>
+                            <p class="ml-4 flex-1 text-left text-gray-800">Event ends</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section id="team" class="py-20 bg-[#f0ebf8]">
+            <div class="container text-center">
+                <h2 class="section-heading text-[#6a498b]">Team</h2>
+                <div class="w-full max-w-4xl mx-auto p-8 bg-white rounded-[2rem] text-center content-box">
+                    <p class="text-lg text-gray-700 max-w-2xl mx-auto mb-8">Meet the team behind TerraQuest, a passionate group of students & staffs dedicated to making this event a success.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                        <!-- Example Team Member Card -->
+                        <div class="bg-[#f0ebf8] p-6 rounded-lg shadow-lg content-box">
+                            <img src="https://placehold.co/150x150" alt="Team Member Name" class="rounded-full mx-auto mb-4 w-24 h-24 object-cover">
+                            <h3 class="text-xl font-bold text-black">Member Name</h3>
+                            <p class="text-gray-600">Role/Title</p>
+                        </div>
+                        <div class="bg-[#f0ebf8] p-6 rounded-lg shadow-lg content-box">
+                            <img src="https://placehold.co/150x150" alt="Team Member Name" class="rounded-full mx-auto mb-4 w-24 h-24 object-cover">
+                            <h3 class="text-xl font-bold text-black">Member Name</h3>
+                            <p class="text-gray-600">Role/Title</p>
+                        </div>
+                        <div class="bg-[#f0ebf8] p-6 rounded-lg shadow-lg content-box">
+                            <img src="https://placehold.co/150x150" alt="Team Member Name" class="rounded-full mx-auto mb-4 w-24 h-24 object-cover">
+                            <h3 class="text-xl font-bold text-black">Member Name</h3>
+                            <p class="text-gray-600">Role/Title</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQs Section -->
+        <section id="faqs" class="py-20 bg-[#e0d6f2]">
+            <div class="container text-center">
+                <h2 class="section-heading text-[#6a498b]">FAQs</h2>
+                <div class="w-full max-w-4xl mx-auto p-8 bg-white rounded-[2rem] text-center content-box">
+                    <div class="space-y-4 text-left">
+                        <!-- Updated FAQ Items -->
+                        <div class="border-b border-gray-300 pb-4">
+                            <button class="flex justify-between items-center w-full focus:outline-none">
+                                <span class="text-lg font-bold text-black">What is Terraquest?</span>
+                                <svg class="w-6 h-6 text-gray-600 transform transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                            <p class="faq-answer mt-2 text-gray-700 hidden">Terraquest is a hackathon event where participants collaborate to solve real world challenges and build innovative solutions within a limited timeframe under sustainable development goals.</p>
+                        </div>
+                        <div class="border-b border-gray-300 pb-4">
+                            <button class="flex justify-between items-center w-full focus:outline-none">
+                                <span class="text-lg font-bold text-black">Who can participate?</span>
+                                <svg class="w-6 h-6 text-gray-600 transform transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                            <p class="faq-answer mt-2 text-gray-700 hidden">Anyone interested in technology, innovation, and problem-solving can participate. Students, professionals, and enthusiasts are all welcome.</p>
+                        </div>
+                        <div class="border-b border-gray-300 pb-4">
+                            <button class="flex justify-between items-center w-full focus:outline-none">
+                                <span class="text-lg font-bold text-black">How do I register?</span>
+                                <svg class="w-6 h-6 text-gray-600 transform transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                            <p class="faq-answer mt-2 text-gray-700 hidden">You can register through our official website by filling out the registration form and following the instructions provided.</p>
+                        </div>
+                        <div class="border-b border-gray-300 pb-4">
+                            <button class="flex justify-between items-center w-full focus:outline-none">
+                                <span class="text-lg font-bold text-black">Is there a registration fee?</span>
+                                <svg class="w-6 h-6 text-gray-600 transform transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                            <p class="faq-answer mt-2 text-gray-700 hidden">₹500 per person.</p>
+                        </div>
+                        <div class="border-b border-gray-300 pb-4">
+                            <button class="flex justify-between items-center w-full focus:outline-none">
+                                <span class="text-lg font-bold text-black">What are the prizes?</span>
+                                <svg class="w-6 h-6 text-gray-600 transform transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                            <p class="faq-answer mt-2 text-gray-700 hidden">Prizes include cash rewards, goodies, T-shirt.</p>
+                        </div>
+                        <div class="border-b border-gray-300 pb-4">
+                            <button class="flex justify-between items-center w-full focus:outline-none">
+                                <span class="text-lg font-bold text-black">What technologies can I use?</span>
+                                <svg class="w-6 h-6 text-gray-600 transform transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                            <p class="faq-answer mt-2 text-gray-700 hidden">You can use any technology stack you are comfortable with. We encourage creativity and innovation in your solutions.</p>
+                        </div>
+                        <div class="border-b border-gray-300 pb-4">
+                            <button class="flex justify-between items-center w-full focus:outline-none">
+                                <span class="text-lg font-bold text-black">How can I stay updated?</span>
+                                <svg class="w-6 h-6 text-gray-600 transform transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                            <p class="faq-answer mt-2 text-gray-700 hidden">Follow us on our social media channels and join the WhatsApp group for the latest updates and announcements.</p>
+                        </div>
+                        <div class="border-b border-gray-300 pb-4">
+                            <button class="flex justify-between items-center w-full focus:outline-none">
+                                <span class="text-lg font-bold text-black">How many members can form a team?</span>
+                                <svg class="w-6 h-6 text-gray-600 transform transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                            <p class="faq-answer mt-2 text-gray-700 hidden">A team can have up to 3-4 members.</p>
+                        </div>
+                        <div class="border-b border-gray-300 pb-4">
+                            <button class="flex justify-between items-center w-full focus:outline-none">
+                                <span class="text-lg font-bold text-black">Is Terraquest an open-theme hackathon, or will there be problem statements?</span>
+                                <svg class="w-6 h-6 text-gray-600 transform transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                            <p class="faq-answer mt-2 text-gray-700 hidden">You have two options: Work on a problem statements of your choice from the given theme. Select from the problem statements provided in the brochure. You're free to choose either option based on your preference.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer id="footer" class="py-12 bg-[#9f86c0] text-center text-white">
+            <div class="container">
+                <p>&copy; 2025 TerraQuest. All rights reserved.</p>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Smooth scroll for nav links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId && targetId !== '#') {
+                        document.querySelector(targetId).scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('mobile-menu-open');
+                    mobileMenu.classList.toggle('mobile-menu-closed');
+                });
+            }
+
+            // Intersection Observer for fade-in animations
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.2
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in, .section-heading').forEach(element => {
+                observer.observe(element);
+            });
+
+            // Navbar scroll animation
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('navbar-scrolled');
+                    navbar.classList.remove('navbar-full');
+                } else {
+                    navbar.classList.remove('navbar-scrolled');
+                    navbar.classList.add('navbar-full');
+                }
+            });
+
+            // Timeline interactivity
+            const day1Btn = document.getElementById('day1-btn');
+            const day2Btn = document.getElementById('day2-btn');
+            const timelineDate = document.getElementById('timeline-date');
+            const timelineSubtitle = document.getElementById('timeline-subtitle');
+            const day1Events = document.querySelectorAll('.day1-event');
+            const day2Events = document.querySelectorAll('.day2-event');
+
+            day1Btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                timelineDate.textContent = 'OCTOBER 10, 2025';
+                timelineSubtitle.textContent = 'Kickoff & Ideation';
+                day1Events.forEach(el => el.classList.remove('hidden'));
+                day2Events.forEach(el => el.classList.add('hidden'));
+                day1Btn.classList.add('bg-blue-600', 'text-white');
+                day1Btn.classList.remove('bg-[#f0f0f0]', 'text-gray-700');
+                day2Btn.classList.remove('bg-blue-600', 'text-white');
+                day2Btn.classList.add('bg-[#f0f0f0]', 'text-gray-700');
+            });
+
+            day2Btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                timelineDate.textContent = 'OCTOBER 11, 2025';
+                timelineSubtitle.textContent = 'Development & Presentation';
+                day1Events.forEach(el => el.classList.add('hidden'));
+                day2Events.forEach(el => el.classList.remove('hidden'));
+                day2Btn.classList.add('bg-blue-600', 'text-white');
+                day2Btn.classList.remove('bg-[#f0f0f0]', 'text-gray-700');
+                day1Btn.classList.remove('bg-blue-600', 'text-white');
+                day1Btn.classList.add('bg-[#f0f0f0]', 'text-gray-700');
+            });
+
+            // FAQ toggle functionality
+            document.querySelectorAll('#faqs button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const answer = button.nextElementSibling;
+                    const svg = button.querySelector('svg');
+
+                    answer.classList.toggle('hidden');
+                    svg.classList.toggle('rotate-180');
+                });
+            });
+
+            // Video play on focus
+            const video = document.getElementById('bg-video');
+            window.addEventListener('focus', () => {
+                if (video) {
+                    video.play();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
