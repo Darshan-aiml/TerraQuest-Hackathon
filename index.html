@@ -104,6 +104,52 @@
             opacity: 0;
             transition: all 0.3s ease-in-out;
         }
+        /* New Styles for infinite horizontal scroll */
+        .image-track {
+            display: flex;
+            white-space: nowrap;
+            animation: scroll-left 40s linear infinite; /* Adjust time to change speed */
+        }
+        
+        .image-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .image-container {
+            flex: 0 0 auto;
+            margin-right: 1.5rem;
+        }
+        .carousel-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 1rem;
+            pointer-events: none;
+        }
+        .carousel-nav button {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid black;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            pointer-events: auto;
+            backdrop-filter: blur(5px);
+        }
     </style>
 </head>
 <body>
@@ -181,6 +227,33 @@
                         <p class="text-lg leading-relaxed text-[#1d1d1f]">
                             Join us for 24 hours of coding, learning, and collaboration, where your ideas can make a difference and help shape a more sustainable world.
                         </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Theme Section -->
+        <section id="theme" class="py-20 bg-[#e0d6f2]">
+            <div class="container text-center fade-in">
+                <h2 class="section-heading text-[#6a498b]">THEME</h2>
+                <div class="w-full max-w-4xl mx-auto p-8 bg-white rounded-[2rem] text-center content-box">
+                    <p class="text-lg text-gray-700 max-w-2xl mx-auto mb-8">Choose from the example problem statements below, or Propose your own problem within these SDGs.</p>
+                    <div class="flex flex-wrap justify-center items-center gap-6">
+                        <div class="w-64 h-64 border-4 border-black rounded-lg overflow-hidden flex-shrink-0">
+                            <img src="image_ff7770.png" alt="Clean Water and Sanitation" class="w-full h-full object-cover">
+                        </div>
+                        <div class="w-64 h-64 border-4 border-black rounded-lg overflow-hidden flex-shrink-0">
+                            <img src="image_ff7a3e.png" alt="Affordable and Clean Energy" class="w-full h-full object-cover">
+                        </div>
+                        <div class="w-64 h-64 border-4 border-black rounded-lg overflow-hidden flex-shrink-0">
+                            <img src="image_ff7a57.png" alt="Climate Action" class="w-full h-full object-cover">
+                        </div>
+                        <div class="w-64 h-64 border-4 border-black rounded-lg overflow-hidden flex-shrink-0">
+                            <img src="image_ff7a5c.png" alt="Life Below Water" class="w-full h-full object-cover">
+                        </div>
+                        <div class="w-64 h-64 border-4 border-black rounded-lg overflow-hidden flex-shrink-0">
+                            <img src="image_ff7a75.png" alt="Life on Land" class="w-full h-full object-cover">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -473,6 +546,26 @@
                 if (video) {
                     video.play();
                 }
+            });
+            // Carousel functionality
+            const track = document.getElementById('image-track');
+            const leftArrow = document.getElementById('left-arrow');
+            const rightArrow = document.getElementById('right-arrow');
+            
+            // Re-enabling continuous scroll
+            track.addEventListener('mouseenter', () => {
+                track.style.animationPlayState = 'paused';
+            });
+            track.addEventListener('mouseleave', () => {
+                track.style.animationPlayState = 'running';
+            });
+
+            leftArrow.addEventListener('click', () => {
+                track.scrollBy({ left: -250, behavior: 'smooth' });
+            });
+
+            rightArrow.addEventListener('click', () => {
+                track.scrollBy({ left: 250, behavior: 'smooth' });
             });
         });
     </script>
